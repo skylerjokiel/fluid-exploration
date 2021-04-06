@@ -1,11 +1,7 @@
-import { IFluidLoadable } from "@fluidframework/core-interfaces";
-import { ISharedObject } from "@fluidframework/shared-object-base";
 import { IFluidDataStoreFactory } from "@fluidframework/runtime-definitions";
 import { IChannelFactory } from "@fluidframework/datastore-definitions";
 
-export type FluidObjectCollection = Record<string, FluidObjectClass>;
-
-export type FluidObject = IFluidLoadable | ISharedObject;
+export type FluidObjectClassCollection = Record<string, FluidObjectClass>;
 
 export type FluidObjectClass = DataObjectClass | SharedObjectClass;
 
@@ -37,5 +33,5 @@ export type ContainerConfig<T extends string = string> = {
      *
      * To get these DataObjects, call `container.getDataObject` passing in one of the ids.
      */
-    initialObjects?: FluidObjectCollection;
+    initialObjects?: FluidObjectClassCollection;
 }

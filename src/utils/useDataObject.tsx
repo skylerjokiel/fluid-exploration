@@ -1,13 +1,13 @@
 import { KeyValueDataObject } from "@fluid-experimental/data-objects";
+import { IFluidLoadable } from "@fluidframework/core-interfaces";
 import { SharedMap } from "@fluidframework/map";
 import React from "react";
-import { FluidObject } from "../fluidStatic";
 import { FluidContext } from "./FluidContext";
 
 /**
  * Loads a FluidObject of a given type
  */
-export function useFluidObject<T extends FluidObject>(id: string): T | undefined {
+export function useFluidObject<T extends IFluidLoadable>(id: string): T | undefined {
     const [obj, setObj] = React.useState<T | undefined>();
     const container = React.useContext(FluidContext);
 

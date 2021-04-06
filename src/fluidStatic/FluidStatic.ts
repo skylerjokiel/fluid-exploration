@@ -19,9 +19,9 @@ import {
 import {
     ContainerConfig,
     DataObjectClass,
-    FluidObject,
     FluidObjectClass,
 } from "./types";
+import { IFluidLoadable } from "@fluidframework/core-interfaces";
 
 export class FluidContainer extends EventEmitter implements Pick<Container, "audience" | "clientId"> {
     private readonly types: Set<string>;
@@ -53,10 +53,7 @@ export class FluidContainer extends EventEmitter implements Pick<Container, "aud
         return this.container.clientId;
     }
 
-    public async create<T extends FluidObject>(
-        objectClass: FluidObjectClass,
-        id: string,
-    ) {
+    public async create<T extends IFluidLoadable>(objectClass: FluidObjectClass) {
         // This is a runtime check to ensure the developer doesn't try to create something they have not defined in the config
         const type = isDataObjectClass(objectClass) ? objectClass.factory.type : objectClass.getFactory().type;
         if (!this.types.has(type)) {
@@ -64,11 +61,15 @@ export class FluidContainer extends EventEmitter implements Pick<Container, "aud
                 `Trying to create an Object with type ${type} that was not defined as a dataType in the Container Config`);
         }
 
-        return this.rootDataObject.create<T>(objectClass, id);
+        return this.rootDataObject.create<T>(objectClass);
     }
 
-    public async get<T extends FluidObject>(id: string) {
+    public async get<T extends IFluidLoadable>(id: string) {
         return this.rootDataObject.get<T>(id);
+    }
+
+    public delete(id: string) {
+        this.rootDataObject.delete(id)
     }
 }
 

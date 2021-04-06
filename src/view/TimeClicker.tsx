@@ -37,8 +37,8 @@ export function TimeClickerItemKV(props: {id: string}) {
     <div className="App">
         KVPair-
         <button onClick={() => setPair("time", Date.now())}>
-        { data.time ?? "Click Me 😎" }
-            </button>
+            { data.time ?? "Click Me 😎" }
+        </button>
     </div>);
 }
 /**

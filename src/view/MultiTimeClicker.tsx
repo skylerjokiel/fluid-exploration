@@ -22,8 +22,7 @@ export function MultiTimeClicker() {
     if (loading) return <div>Loading... </div>;
     
     const createNewTimeClicker = async () => {
-        const id = Date.now().toString();
-        await container.create(KeyValueDataObject, id);
+        const [, id] = await container.create(KeyValueDataObject);
 
         // We set the id as a key so we can get them later
         setPair(id, "");
@@ -32,7 +31,7 @@ export function MultiTimeClicker() {
     const items = [];
 
     for (let key in data) {
-        items.push(<TimeClickerItemKV id={key} /> )
+        items.push(<TimeClickerItemKV id={key} />);
     }
 
     return (
