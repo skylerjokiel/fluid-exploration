@@ -6,7 +6,6 @@ import { useFluidObject } from "../utils/useDataObject";
 
 export const SimpleCounterContainerDefinition: ContainerConfig<ContainerType> = {
     name: "simple-counter",
-    dataTypes: [SharedCounter],
     initialObjects: {
         "counter-id": SharedCounter
     },

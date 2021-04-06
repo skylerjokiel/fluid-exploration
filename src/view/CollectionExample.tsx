@@ -4,10 +4,8 @@ import { ContainerConfig } from "../fluidStatic";
 import { ContainerType } from "../utils/ContainerMapping";
 import { useFluidObject } from "../utils/useDataObject";
 
-
 export const CollectionExampleContainerDefinition: ContainerConfig<ContainerType> = {
     name: "collection-example",
-    dataTypes: [SharedMapCollection],
     initialObjects: {
         "shared-map-collection-1": SharedMapCollection
     },

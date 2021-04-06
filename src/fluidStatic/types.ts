@@ -15,7 +15,6 @@ export type SharedObjectClass = {
 
 export type ContainerConfig<T extends string = string> = {
     name: T;
-    dataTypes: FluidObjectClass[];
     /**
      * initialDataObjects defines dataObjects that will be created when the Container
      * is first created. It uses the key as the id and the value and the DataObject to create.
@@ -33,5 +32,10 @@ export type ContainerConfig<T extends string = string> = {
      *
      * To get these DataObjects, call `container.getDataObject` passing in one of the ids.
      */
-    initialObjects?: FluidObjectClassCollection;
+    initialObjects: FluidObjectClassCollection;
+
+    /**
+     * Dynamic objects are FluidObjects that can be created after the initial container creation.
+     */
+    dynamicObjectTypes?: FluidObjectClass[];
 }

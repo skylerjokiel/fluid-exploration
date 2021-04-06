@@ -6,7 +6,6 @@ import { useFluidObject } from "../utils/useDataObject";
 
 export const DiceRollerContainerDefinition: ContainerConfig<ContainerType> = {
     name: "dice-roller",
-    dataTypes: [DiceRollerDataObject],
     initialObjects: {
         "dice-roller-key": DiceRollerDataObject,
     },

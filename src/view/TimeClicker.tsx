@@ -6,7 +6,6 @@ import { useKeyValuePair, useSharedMap } from "../utils/useDataObject";
 
 export const TimeClickerContainerDefinition: ContainerConfig<ContainerType> = {
     name: "time",
-    dataTypes: [KeyValueDataObject, SharedMap],
     initialObjects: {
         "time-clicker-data": KeyValueDataObject,
         "time-clicker-map": SharedMap

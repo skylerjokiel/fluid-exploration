@@ -7,7 +7,6 @@ import { ContainerType } from "../utils/ContainerMapping";
 
 export const NoteBoardContainerDefinition: ContainerConfig<ContainerType> = {
     name: "noteboard",
-    dataTypes: [KeyValueDataObject],
     initialObjects: {
         "note-location-data": KeyValueDataObject,
         "note-content-data": KeyValueDataObject,

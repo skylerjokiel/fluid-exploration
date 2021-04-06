@@ -6,7 +6,6 @@ import { ContainerType } from "../utils/ContainerMapping";
 
 export const MouseContainerDefinition: ContainerConfig<ContainerType> = {
     name: "mouse",
-    dataTypes: [KeyValueDataObject],
     initialObjects: {
         "mouse-track-info": KeyValueDataObject,
     },

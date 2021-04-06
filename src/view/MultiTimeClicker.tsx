@@ -9,10 +9,10 @@ import { ContainerType } from "../utils/ContainerMapping";
 
 export const MultiTimeClickerContainerDefinition: ContainerConfig<ContainerType> = {
     name: "multi-time-clicker",
-    dataTypes: [KeyValueDataObject],
     initialObjects: {
         "object-ids": KeyValueDataObject,
     },
+    dynamicObjectTypes: [KeyValueDataObject],
 }
 
 export function MultiTimeClicker() {

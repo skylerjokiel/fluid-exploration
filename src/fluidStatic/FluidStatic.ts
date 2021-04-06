@@ -124,23 +124,36 @@ export class FluidInstance {
     }
 
     private parseDataObjectsFromSharedObjects(config: ContainerConfig): [DataObjectClass[], IChannelFactory[]] {
-        const dataObjects: DataObjectClass[] = [];
-        const sharedObjects: IChannelFactory[] = [];
-        for (const obj of config.dataTypes) {
+        const dataObjects: Set<DataObjectClass> = new Set();
+        const sharedObjects: Set<IChannelFactory> = new Set();
+
+        const tryAddObject = (obj: FluidObjectClass) => {
             if(isSharedObjectClass(obj)){
-                sharedObjects.push(obj.getFactory());
+                sharedObjects.add(obj.getFactory());
             } else if (isDataObjectClass(obj)) {
-                dataObjects.push(obj);
+                dataObjects.add(obj);
             } else {
                 throw new Error(`Entry is neither a DataObject or a SharedObject`);
             }
         }
 
-        if (dataObjects.length === 0 && sharedObjects.length === 0) {
+        // Add the object types that will be initialized
+        for (const key in config.initialObjects) {
+            tryAddObject(config.initialObjects[key]);
+        }
+
+        // If there are dynamic object types we will add them now
+        if (config.dynamicObjectTypes) {
+            for (const obj of config.dynamicObjectTypes) {
+                tryAddObject(obj);
+            }
+        }
+
+        if (dataObjects.size === 0 && sharedObjects.size === 0) {
             throw new Error("Container cannot be initialized without any DataTypes");
         }
 
-        return [dataObjects, sharedObjects]
+        return [Array.from(dataObjects), Array.from(sharedObjects)]
     }
 
 

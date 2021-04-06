@@ -6,7 +6,6 @@ import { ContainerType } from "../utils/ContainerMapping";
 
 export const TextAreaContainerDefinition: ContainerConfig<ContainerType> = {
     name: "text-area",
-    dataTypes: [SharedString],
     initialObjects: {
         "text-area": SharedString
     },
