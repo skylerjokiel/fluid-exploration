@@ -104,7 +104,7 @@ export function useFluidHandle<T = IFluidLoadable>(handle: IFluidHandle<T>): T |
 
     return (
     <div className="App">
-        SharedMap-
+        SharedMapViaHandle-
         <button onClick={() => setPair("time", Date.now())}>
         { data.time ?? "Click Me 😎" }
             </button>
