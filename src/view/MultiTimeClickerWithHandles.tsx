@@ -43,7 +43,7 @@ export function MultiTimeClickerWithHandles() {
     const items = [];
     for (let key of Array.from(rootMap.keys())) {
         const handle = rootMap.get<IFluidHandle<SharedMap>>(key);
-        if (!handle) throw new Error("this shouldn't happen ever");
+        if (!handle) throw new Error("this should never happen");
         items.push(<TimeClickerItemSharedMapFromHandle handle={handle} />);
     }
 
