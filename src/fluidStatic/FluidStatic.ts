@@ -47,6 +47,14 @@ export class FluidContainer extends EventEmitter implements Pick<Container, "aud
         return this.rootDataObject.create<T>(objectClass);
     }
 
+    /**
+     * NOTE: We shouldn't have both create and create detached. It should probably just be createDetached
+     * and force the developer to attach by attaching the handle
+     */
+    public async createDetached<T extends IFluidLoadable>(objectClass: FluidObjectClass) {
+        return this.rootDataObject.createDetached<T>(objectClass);
+    }
+
     public async get<T extends IFluidLoadable>(id: string) {
         return this.rootDataObject.get<T>(id);
     }

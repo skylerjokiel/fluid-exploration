@@ -49,7 +49,8 @@ export class RootDataObject extends DataObject<object, { initialObjects: FluidOb
         // If the developer provides static objects to be created on Container create we will create them
         const initialObjectsP: Promise<[IFluidLoadable, string]>[] = [];
         Object.entries(props.initialObjects).forEach(([id, dataObjectClass]) => {
-            initialObjectsP.push(this.createInternal(dataObjectClass, id));
+            // We want to ideally only create initial data objects attached
+            initialObjectsP.push(this.createInternal(dataObjectClass, id, false));
         });
 
         await Promise.all(initialObjectsP);
@@ -59,7 +60,13 @@ export class RootDataObject extends DataObject<object, { initialObjects: FluidOb
 
     public async create<T extends IFluidLoadable>(objectClass: FluidObjectClass): Promise<[T, string]> {
         // TODO: should use UUId
-        return this.createInternal(objectClass, Date.now().toString());
+        return this.createInternal<T>(objectClass, Date.now().toString(), false);
+    }
+
+    public async createDetached<T extends IFluidLoadable>(objectClass: FluidObjectClass): Promise<T> {
+        // TODO: should use UUId
+        const [obj] = await this.createInternal<T>(objectClass, Date.now().toString(), true);
+        return obj;
     }
 
     public async get<T extends IFluidLoadable>(id: string): Promise<T> {
@@ -77,11 +84,11 @@ export class RootDataObject extends DataObject<object, { initialObjects: FluidOb
         this.dataObjectDir.delete(id) ?? this.sharedObjectDir.delete(id);
     }
 
-    private async createInternal<T extends IFluidLoadable>(objectClass: FluidObjectClass, id: string): Promise<[T, string]> {
+    private async createInternal<T extends IFluidLoadable>(objectClass: FluidObjectClass, id: string, detached: boolean): Promise<[T, string]> {
         if (isDataObjectClass(objectClass)) {
-            return this.createDataObject<T>(objectClass, id);
+            return this.createDataObject<T>(objectClass, id, detached);
         } else if (isSharedObjectClass(objectClass)) {
-            return this.createSharedObject<T>(objectClass, id);
+            return this.createSharedObject<T>(objectClass, id, detached);
         }
 
         throw new Error("Could not create new Fluid object because an unknown object was passed");
@@ -90,13 +97,15 @@ export class RootDataObject extends DataObject<object, { initialObjects: FluidOb
     private async createDataObject<T extends IFluidLoadable>(
         dataObjectClass: DataObjectClass,
         id: string,
+        detached: boolean,
     ): Promise<[T, string]> {
         const factory = dataObjectClass.factory;
         const packagePath = [...this.context.packagePath, factory.type];
         const router = await this.context.containerRuntime.createDataStore(packagePath);
         const object = await requestFluidObject<T>(router, "/");
-        // TODO: Use uuid here. or do something else.
-        this.dataObjectDir.set(id, object.handle);
+        if (!detached) {
+            this.dataObjectDir.set(id, object.handle);
+        }
         return [object, id];
     }
 
@@ -108,10 +117,13 @@ export class RootDataObject extends DataObject<object, { initialObjects: FluidOb
     private createSharedObject<T extends IFluidLoadable>(
         sharedObjectClass: SharedObjectClass,
         id: string,
+        detached: boolean,
     ): [T, string] {
         const factory = sharedObjectClass.getFactory();
         const obj = this.runtime.createChannel(undefined, factory.type);
-        this.sharedObjectDir.set(id, obj.handle);
+        if (!detached) {
+            this.sharedObjectDir.set(id, obj.handle);
+        }
         return [obj as unknown as T, id];
     }
 

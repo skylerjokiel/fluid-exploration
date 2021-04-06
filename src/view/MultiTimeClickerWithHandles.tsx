@@ -33,11 +33,10 @@ export function MultiTimeClickerWithHandles() {
     if (!rootMap) return <div>Loading... </div>;
     
     const createNewTimeClicker = async () => {
-        const [map, id] = await container.create<SharedMap>(SharedMap);
-        console.log("created new cliker with id:" + id)
+        const map = await container.createDetached<SharedMap>(SharedMap);
         // We set the id as a key so we can get them later
         // There's better ways to do this
-        rootMap.set(id, map.handle);
+        rootMap.set(Date.now().toString(), map.handle);
     }
 
     const items = [];
