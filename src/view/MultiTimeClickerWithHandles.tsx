@@ -1,28 +1,28 @@
 import React from "react";
-import { KeyValueDataObject } from "@fluid-experimental/data-objects";
 import { FluidContext } from "../utils/FluidContext";
-import { useKeyValuePair } from "../utils/useDataObject";
+import { useSharedMap } from "../utils/useDataObject";
 
-import { TimeClickerItemKV } from "./TimeClicker";
+import { TimeClickerItemSharedMap } from "./TimeClicker";
 import { ContainerConfig } from "../fluidStatic";
 import { ContainerType } from "../utils/ContainerMapping";
+import { SharedMap } from "@fluidframework/map";
 
-export const MultiTimeClickerContainerDefinition: ContainerConfig<ContainerType> = {
-    name: "multi-time-clicker",
+export const MultiTimeClickerWithHandlesContainerDefinition: ContainerConfig<ContainerType> = {
+    name: "multi-time-clicker-with-handles",
     initialObjects: {
-        "object-ids": KeyValueDataObject,
+        "object-ids": SharedMap,
     },
-    dynamicObjectTypes: [KeyValueDataObject],
+    dynamicObjectTypes: [SharedMap],
 }
 
-export function MultiTimeClicker() {
-    const [data, setPair, loading] = useKeyValuePair("object-ids");
+export function MultiTimeClickerWithHandles() {
+    const [data, setPair, loading] = useSharedMap("object-ids");
     const container = React.useContext(FluidContext);
 
     if (loading) return <div>Loading... </div>;
     
     const createNewTimeClicker = async () => {
-        const [, id] = await container.create<KeyValueDataObject>(KeyValueDataObject);
+        const [, id] = await container.create<SharedMap>(SharedMap);
 
         // We set the id as a key so we can get them later
         // There's better ways to do this
@@ -32,7 +32,7 @@ export function MultiTimeClicker() {
     const items = [];
 
     for (let key in data) {
-        items.push(<TimeClickerItemKV id={key} />);
+        items.push(<TimeClickerItemSharedMap id={key} />);
     }
 
     return (

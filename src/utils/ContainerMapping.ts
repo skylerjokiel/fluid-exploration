@@ -8,6 +8,7 @@ import { NoteBoardContainerDefinition } from "../view/NoteBoard";
 import { SimpleCounterContainerDefinition } from "../view/SimpleCounter";
 import { TextAreaContainerDefinition } from "../view/TextArea";
 import { TimeClickerContainerDefinition } from "../view/TimeClicker";
+import { MultiTimeClickerWithHandlesContainerDefinition } from "../view/MultiTimeClickerWithHandles";
 
 export type ContainerType =
     "mouse"
@@ -18,7 +19,8 @@ export type ContainerType =
     | "multi-time-clicker"
     | "collection-example"
     | "text-area"
-    | "simple-counter";
+    | "simple-counter"
+    | "multi-time-clicker-with-handles";
 
 export const ContainerMapping: Record<string, ContainerConfig> = {
     [DiceRollerContainerDefinition.name]: DiceRollerContainerDefinition,
@@ -30,4 +32,5 @@ export const ContainerMapping: Record<string, ContainerConfig> = {
     [CollectionExampleContainerDefinition.name]: CollectionExampleContainerDefinition,
     [TextAreaContainerDefinition.name]: TextAreaContainerDefinition,
     [SimpleCounterContainerDefinition.name]: SimpleCounterContainerDefinition,
+    [MultiTimeClickerWithHandlesContainerDefinition.name]: MultiTimeClickerWithHandlesContainerDefinition,
 };

@@ -24,7 +24,6 @@ import {
 import { IFluidLoadable } from "@fluidframework/core-interfaces";
 
 export class FluidContainer extends EventEmitter implements Pick<Container, "audience" | "clientId"> {
-    private readonly types: Set<string>;
 
     private readonly container: Container;
 
@@ -32,18 +31,9 @@ export class FluidContainer extends EventEmitter implements Pick<Container, "aud
 
     public constructor(
         container: Container, // we anticipate using this later, e.g. for Audience
-        namedRegistryEntries: NamedFluidDataStoreRegistryEntry[],
         private readonly rootDataObject: RootDataObject,
         public readonly createNew: boolean) {
             super();
-            this.types = new Set();
-            namedRegistryEntries.forEach((value: NamedFluidDataStoreRegistryEntry) => {
-                const type = value[0];
-                if (this.types.has(type)) {
-                    throw new Error(`Multiple DataObjects share the same type identifier ${value}`);
-                }
-                this.types.add(type);
-            });
             this.audience = container.audience;
             this.container = container;
             container.on("connected", (id: string) =>  this.emit("connected", id));
@@ -54,13 +44,6 @@ export class FluidContainer extends EventEmitter implements Pick<Container, "aud
     }
 
     public async create<T extends IFluidLoadable>(objectClass: FluidObjectClass) {
-        // This is a runtime check to ensure the developer doesn't try to create something they have not defined in the config
-        const type = isDataObjectClass(objectClass) ? objectClass.factory.type : objectClass.getFactory().type;
-        if (!this.types.has(type)) {
-            throw new Error(
-                `Trying to create an Object with type ${type} that was not defined as a dataType in the Container Config`);
-        }
-
         return this.rootDataObject.create<T>(objectClass);
     }
 
@@ -99,7 +82,7 @@ export class FluidInstance {
             true, /* createNew */
         );
         const rootDataObject = (await container.request({ url: "/" })).value;
-        return new FluidContainer(container, registryEntries, rootDataObject, true /* createNew */);
+        return new FluidContainer(container, rootDataObject, true /* createNew */);
     }
 
     public async getContainer(id: string, config: ContainerConfig): Promise<FluidContainer> {
@@ -112,7 +95,7 @@ export class FluidInstance {
             false, /* createNew */
         );
         const rootDataObject = (await container.request({ url: "/" })).value;
-        return new FluidContainer(container, registryEntries, rootDataObject, false /* createNew */);
+        return new FluidContainer(container, rootDataObject, false /* createNew */);
     }
 
     private getRegistryEntries(dataObjects: DataObjectClass[]) {
