@@ -19,7 +19,7 @@ import {
     DataObjectClass,
     FluidObjectClass,
 } from "./types";
-import { IFluidHandle, IFluidLoadable } from "@fluidframework/core-interfaces";
+import { IFluidLoadable } from "@fluidframework/core-interfaces";
 import { IEvent, IEventProvider } from "@fluidframework/common-definitions";
 
 export interface IFluidContainerEvents extends IEvent {
@@ -27,9 +27,9 @@ export interface IFluidContainerEvents extends IEvent {
 }
 
 export interface FluidContainer extends Pick<Container, "audience" | "clientId">, IEventProvider<IFluidContainerEvents> {
-    initialObjects: Record<string, IFluidHandle>;
+    initialObjects: Record<string, <T extends IFluidLoadable>() => Promise<T>>;
     create<T extends IFluidLoadable>(objectClass: FluidObjectClass): Promise<T>;
-    get<T extends IFluidLoadable>(id: string): Promise<T>;
+    initialObject<T extends IFluidLoadable>(id: string): Promise<T>;
 }
 
 /**
