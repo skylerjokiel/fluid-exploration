@@ -18,6 +18,8 @@ import {
     ContainerConfig,
     DataObjectClass,
     FluidObjectClass,
+    FluidLoadableRecord,
+    InitialObjects,
 } from "./types";
 import { IFluidLoadable } from "@fluidframework/core-interfaces";
 import { IEvent, IEventProvider } from "@fluidframework/common-definitions";
@@ -26,10 +28,12 @@ export interface IFluidContainerEvents extends IEvent {
     (event: "connected", listener: (clientId: string) => void): any;
 }
 
-export interface FluidContainer extends Pick<Container, "audience" | "clientId">, IEventProvider<IFluidContainerEvents> {
-    initialObjects: Record<string, <T extends IFluidLoadable>() => Promise<T>>;
+export interface FluidContainer<K extends FluidLoadableRecord<any> = FluidLoadableRecord<any>> extends Pick<Container, "audience" | "clientId">, IEventProvider<IFluidContainerEvents> {
     create<T extends IFluidLoadable>(objectClass: FluidObjectClass): Promise<T>;
-    initialObject<T extends IFluidLoadable>(id: string): Promise<T>;
+
+    // We should only have one of these
+    initialObjects: InitialObjects<keyof K, K>;
+    initialObject<T extends IFluidLoadable>(id: string): Promise<T>; 
 }
 
 /**

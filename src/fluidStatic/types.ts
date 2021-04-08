@@ -1,9 +1,12 @@
 import { IFluidDataStoreFactory } from "@fluidframework/runtime-definitions";
 import { IChannelFactory } from "@fluidframework/datastore-definitions";
+import { IFluidLoadable } from "@fluidframework/core-interfaces";
 
 export type FluidObjectClassCollection = Record<string, FluidObjectClass>;
 
-export type FluidObjectClass = DataObjectClass | SharedObjectClass;
+export type FluidObjectClass<T extends IFluidLoadable = IFluidLoadable> = (DataObjectClass | SharedObjectClass) & FluidObjectCtor<T>;
+
+export type FluidObjectCtor<T extends IFluidLoadable> = new(...args: any[]) => T;
 
 export type DataObjectClass = {
     readonly factory: IFluidDataStoreFactory;
@@ -13,7 +16,19 @@ export type SharedObjectClass = {
     readonly getFactory: () => IChannelFactory;
 }
 
-export type ContainerConfig<T extends string = string> = {
+// K extends Record<string, (new (...args: any[]) => IFluidLoadable)> & Record<string, FluidObjectClass> = Record<string, (new (...args: any[]) => IFluidLoadable)>
+
+export type FluidLoadableRecord<T extends keyof any = any> = Record<T, IFluidLoadable>;
+
+export type InitialObjects<K extends keyof any, T extends FluidLoadableRecord<K>> = {
+    [P in K]: Promise<T[P]>;
+};
+
+type FluidObjectClassRecord<K extends keyof any, T extends FluidLoadableRecord<K>> = {
+    [P in K]: FluidObjectClass<T[P]>;
+};
+
+export type ContainerConfig<T extends string = string, K extends FluidLoadableRecord = FluidLoadableRecord> = {
     name: T;
     /**
      * initialDataObjects defines dataObjects that will be created when the Container
@@ -32,7 +47,7 @@ export type ContainerConfig<T extends string = string> = {
      *
      * To get these DataObjects, call `container.getDataObject` passing in one of the ids.
      */
-    initialObjects: FluidObjectClassCollection;
+    initialObjects: FluidObjectClassRecord<keyof K, K>;
 
     /**
      * Dynamic objects are FluidObjects that can be created after the initial container creation.

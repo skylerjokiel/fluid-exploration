@@ -20,6 +20,8 @@ import {
     FluidObjectClass,
     FluidObjectClassCollection,
     SharedObjectClass,
+    InitialObjects,
+    FluidLoadableRecord,
 } from "./types";
 
 import { isSharedObjectClass, isDataObjectClass } from "./utils";
@@ -83,7 +85,7 @@ export class RootDataObject extends DataObject<object, { initialObjects: FluidOb
         throw new Error("Could not create new Fluid object because an unknown object was passed");
     }
 
-    public get initialObjects(): Record<string, <T extends IFluidLoadable>() => Promise<T>> {
+    public get initialObjects(): InitialObjects<any, FluidLoadableRecord<any>> {
         const mapEntries = ([key, handle]: [string, IFluidHandle]) => {
             return [key, async () => handle.get()];
         }
