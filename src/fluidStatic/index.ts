@@ -6,8 +6,11 @@ import { Fluid } from "./FluidStatic";
 
 export * from "./containerCode";
 export {
-    FluidContainer,
     FluidInstance,
+} from "./FluidStatic";
+
+export type {
+    FluidContainer
 } from "./FluidStatic";
 
 export * from "./types";

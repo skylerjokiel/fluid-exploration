@@ -3,14 +3,12 @@
  * Licensed under the MIT License.
  */
 
-import { EventEmitter } from "events";
 import { getContainer, IGetContainerService } from "@fluid-experimental/get-container";
 import { Container } from "@fluidframework/container-loader";
 import { IChannelFactory } from "@fluidframework/datastore-definitions";
 import { NamedFluidDataStoreRegistryEntry } from "@fluidframework/runtime-definitions";
 import {
     DOProviderContainerRuntimeFactory,
-    RootDataObject,
 } from "./containerCode";
 import {
     isSharedObjectClass,
@@ -21,47 +19,17 @@ import {
     DataObjectClass,
     FluidObjectClass,
 } from "./types";
-import { IFluidLoadable } from "@fluidframework/core-interfaces";
+import { IFluidHandle, IFluidLoadable } from "@fluidframework/core-interfaces";
+import { IEvent, IEventProvider } from "@fluidframework/common-definitions";
 
-export class FluidContainer extends EventEmitter implements Pick<Container, "audience" | "clientId"> {
+export interface IFluidContainerEvents extends IEvent {
+    (event: "connected", listener: (clientId: string) => void): any;
+}
 
-    private readonly container: Container;
-
-    public readonly audience: Container["audience"];
-
-    public constructor(
-        container: Container, // we anticipate using this later, e.g. for Audience
-        private readonly rootDataObject: RootDataObject,
-        public readonly createNew: boolean) {
-            super();
-            this.audience = container.audience;
-            this.container = container;
-            container.on("connected", (id: string) =>  this.emit("connected", id));
-        }
-
-    public get clientId() {
-        return this.container.clientId;
-    }
-
-    public async create<T extends IFluidLoadable>(objectClass: FluidObjectClass) {
-        return this.rootDataObject.create<T>(objectClass);
-    }
-
-    /**
-     * NOTE: We shouldn't have both create and create detached. It should probably just be createDetached
-     * and force the developer to attach by attaching the handle
-     */
-    public async createDetached<T extends IFluidLoadable>(objectClass: FluidObjectClass) {
-        return this.rootDataObject.createDetached<T>(objectClass);
-    }
-
-    public async get<T extends IFluidLoadable>(id: string) {
-        return this.rootDataObject.get<T>(id);
-    }
-
-    public delete(id: string) {
-        this.rootDataObject.delete(id)
-    }
+export interface FluidContainer extends Pick<Container, "audience" | "clientId">, IEventProvider<IFluidContainerEvents> {
+    initialObjects: Record<string, IFluidHandle>;
+    create<T extends IFluidLoadable>(objectClass: FluidObjectClass): Promise<T>;
+    get<T extends IFluidLoadable>(id: string): Promise<T>;
 }
 
 /**
@@ -90,7 +58,7 @@ export class FluidInstance {
             true, /* createNew */
         );
         const rootDataObject = (await container.request({ url: "/" })).value;
-        return new FluidContainer(container, rootDataObject, true /* createNew */);
+        return rootDataObject as FluidContainer;
     }
 
     public async getContainer(id: string, config: ContainerConfig): Promise<FluidContainer> {
@@ -103,7 +71,7 @@ export class FluidInstance {
             false, /* createNew */
         );
         const rootDataObject = (await container.request({ url: "/" })).value;
-        return new FluidContainer(container, rootDataObject, false /* createNew */);
+        return rootDataObject as FluidContainer;
     }
 
     private getRegistryEntries(dataObjects: DataObjectClass[]) {

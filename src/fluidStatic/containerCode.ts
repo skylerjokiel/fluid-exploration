@@ -14,6 +14,7 @@ import { IFluidHandle, IFluidLoadable } from "@fluidframework/core-interfaces";
 import { IChannelFactory } from "@fluidframework/datastore-definitions";
 import { NamedFluidDataStoreRegistryEntry } from "@fluidframework/runtime-definitions";
 import { requestFluidObject } from "@fluidframework/runtime-utils";
+import { FluidContainer } from "./FluidStatic";
 import {
     DataObjectClass,
     FluidObjectClass,
@@ -23,9 +24,11 @@ import {
 
 import { isSharedObjectClass, isDataObjectClass } from "./utils";
 
-export class RootDataObject extends DataObject<object, { initialObjects: FluidObjectClassCollection }> {
+export class RootDataObject extends DataObject<object, { initialObjects: FluidObjectClassCollection }> implements FluidContainer {
     private dataObjectDirKey = "data-objects";
     private sharedObjectDirKey = "shared-objects";
+    private connectedHandler = (id: string) =>  this.emit("connected", id);
+
     private get dataObjectDir() {
         const dir = this.root.getSubDirectory(this.dataObjectDirKey);
         if (dir === undefined) {
@@ -55,19 +58,39 @@ export class RootDataObject extends DataObject<object, { initialObjects: FluidOb
 
         await Promise.all(initialObjectsP);
     }
-
-    protected async hasInitialized() { }
-
-    public async create<T extends IFluidLoadable>(objectClass: FluidObjectClass): Promise<[T, string]> {
-        // TODO: should use UUId
-        return this.createInternal<T>(objectClass, Date.now().toString(), false);
+    
+    protected async hasInitialized() {
+        this.runtime.on("connected", this.connectedHandler);
     }
 
-    public async createDetached<T extends IFluidLoadable>(objectClass: FluidObjectClass): Promise<T> {
+    public dispose() {
+        // remove our listeners and continue disposing
+        this.runtime.off("connected", this.connectedHandler);
+        super.dispose();
+    }
+
+    public get audience() {
+        return this.context.getAudience();
+    }
+
+    public get clientId() {
+        return this.context.clientId;
+    }
+
+    public async create<T extends IFluidLoadable>(objectClass: FluidObjectClass): Promise<T> {
         // TODO: should use UUId
         const [obj] = await this.createInternal<T>(objectClass, Date.now().toString(), true);
         return obj;
     }
+
+    // public get initialObjects(): [string, IFluidLoadable][]{
+    //     return [...Array.from(this.dataObjectDir.entries()), ...Array.from(this.sharedObjectDir.entries())];
+    // }
+
+    public get initialObjects(): Record<string, IFluidHandle>{
+        return Object.assign(Object.fromEntries(this.dataObjectDir.entries()), Object.fromEntries(this.sharedObjectDir.entries()));
+    }
+
 
     public async get<T extends IFluidLoadable>(id: string): Promise<T> {
         if (this.dataObjectDir.has(id)) {

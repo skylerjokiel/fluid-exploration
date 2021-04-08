@@ -13,7 +13,8 @@ export function useFluidObject<T extends IFluidLoadable>(id: string): T | undefi
 
     React.useEffect(() => {
         const load = async () => {
-            const keyValueDataObject = await container.get<T>(id);
+            const handle = container.initialObjects[id];//
+            const keyValueDataObject = await handle.get() as T;
             setObj(keyValueDataObject);
         }
 

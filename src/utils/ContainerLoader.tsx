@@ -12,7 +12,6 @@ import { ContainerMapping, ContainerType } from "./ContainerMapping";
 import { CollectionExample } from "../view/CollectionExample";
 import { SimpleCounter } from "../view/SimpleCounter";
 import { TextArea } from "../view/TextArea";
-import { MultiTimeClickerWithHandles, MultiTimeClickerWithHandlesContainerDefinition } from "../view/MultiTimeClickerWithHandles";
 
 function useFluidContainer(props: ContainerLoaderProps): [FluidContainer | undefined, boolean] {
     const [loadingFailed, setLoadingFailed] = React.useState(false);
@@ -69,8 +68,6 @@ export function ContainerLoader(props: ContainerLoaderProps) {
             <TextArea />
             : props.type === "simple-counter" ?
             <SimpleCounter />
-            : props.type === MultiTimeClickerWithHandlesContainerDefinition.name ?
-            <MultiTimeClickerWithHandles />
             : <div>😢 Error: Unknown container type [{props.type}]</div>
         }
     </FluidContext.Provider>

@@ -11,7 +11,6 @@ import { TimeClickerContainerDefinition } from "./TimeClicker";
 import { ContainerMapping, ContainerType } from "../utils/ContainerMapping";
 import { ContainerConfig } from "../fluidStatic";
 import { SimpleCounterContainerDefinition } from "./SimpleCounter";
-import { MultiTimeClickerWithHandlesContainerDefinition } from "./MultiTimeClickerWithHandles";
 
 /**
  * Simple page that has buttons to load different experiences powered by Fluid
@@ -46,6 +45,5 @@ export function Home() {
         <button onClick={() => {createContainer(CollectionExampleContainerDefinition)}}>New Collection Example</button>
         <button onClick={() => {createContainer(TextAreaContainerDefinition)}}>New TextArea</button>
         <button onClick={() => {createContainer(SimpleCounterContainerDefinition)}}>New Simple Counter</button>
-        <button onClick={() => {createContainer(MultiTimeClickerWithHandlesContainerDefinition)}}>New Multi Time Clicker With Handles</button>
     </div>)
 }
