@@ -4,14 +4,10 @@ import { ContainerDefinition } from "../utils/types";
 import { useKeyValueDataObject } from "../utils/useDataObject";
 
 export const MouseContainerDefinition: ContainerDefinition = {
-    type: "mouse",
-    config: {
-        dataObjects: [KeyValueDataObject],
-        initialDataObjects: {
-            "mouse-track-info": KeyValueDataObject,
-        },
-    }
-    
+    name: "mouse",
+    initialObjects: {
+        "mouse-track-info": KeyValueDataObject,
+    },
 }
 
 interface CursorInfo {

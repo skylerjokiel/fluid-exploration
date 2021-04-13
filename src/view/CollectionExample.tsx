@@ -5,13 +5,10 @@ import { useDataObject } from "../utils/useDataObject";
 
 
 export const CollectionExampleContainerDefinition: ContainerDefinition = {
-    type: "collection-example",
-    config: {
-        dataObjects: [SharedMapCollection],
-        initialDataObjects: {
-            "shared-map-collection-1": SharedMapCollection
-        },
-    }
+    name: "collection-example",
+    initialObjects: {
+        "shared-map-collection-1": SharedMapCollection
+    },
 }
 
 /**

@@ -3,13 +3,10 @@ import { ContainerDefinition } from "../utils/types";
 import { useKeyValueDataObject } from "../utils/useDataObject";
 
 export const TimeClickerContainerDefinition: ContainerDefinition = {
-    type: "time",
-    config: {
-        dataObjects: [KeyValueDataObject],
-        initialDataObjects: {
-            "time-clicker-data": KeyValueDataObject
-        },
-    }
+    name: "time",
+    initialObjects: {
+        "time-clicker-data": KeyValueDataObject
+    },
 }
 
 /**

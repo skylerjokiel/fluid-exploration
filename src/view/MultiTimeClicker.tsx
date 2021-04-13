@@ -7,13 +7,11 @@ import { useKeyValueDataObject } from "../utils/useDataObject";
 import { TimeClickerItem } from "./TimeClicker";
 
 export const MultiTimeClickerContainerDefinition: ContainerDefinition = {
-    type: "multi-time-clicker",
-    config: {
-        dataObjects: [KeyValueDataObject],
-        initialDataObjects: {
-            "object-ids": KeyValueDataObject,
-        },
-    }
+    name: "multi-time-clicker",
+    initialObjects: {
+        "object-ids": KeyValueDataObject,
+    },
+    dynamicObjectTypes: [KeyValueDataObject],
 }
 
 export function MultiTimeClicker() {
@@ -24,7 +22,8 @@ export function MultiTimeClicker() {
     
     const createNewTimeClicker = async () => {
         const id = Date.now().toString();
-        await container.createDataObject(KeyValueDataObject, id);
+        // TODO: This is broken
+        await container.create(KeyValueDataObject);
 
         // We set the id as a key so we can get them later
         setPair(id, "");

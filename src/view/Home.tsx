@@ -14,11 +14,11 @@ import { CollectionExampleContainerDefinition } from "./CollectionExample";
  */
 export function Home() {
     // createContainer navigates after the async function completes
-    const createContainer = async (def: ContainerDefinition) => {
-        const id = `${def.type}_${Date.now()}`;
-        await Fluid.createContainer(id, def.config)
+    const createContainer = async (config: ContainerDefinition) => {
+        const id = `${config.name}_${Date.now()}`;
+        await Fluid.createContainer(id, config)
 
-        console.log(`Created Container of type [${def.type}] navigating`);
+        console.log(`Created Container of type [${config.name}] navigating`);
 
         // After the container is loaded set the hash which will navigate to the new instance
         window.location.hash = id;

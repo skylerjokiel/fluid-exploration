@@ -24,7 +24,7 @@ function useFluidContainer(props: ContainerLoaderProps): [FluidContainer | undef
                 if (containerConfig === undefined) {
                     throw new Error(`Container type ${[props.type]} is not defined in the ContainerMapping`);
                 }
-                const fluidContainer = await Fluid.getContainer(props.id, ContainerMapping[props.type].config);
+                const fluidContainer = await Fluid.getContainer(props.id, containerConfig);
                 setContainer(fluidContainer);
             } catch(e) {
                 console.log(e);

@@ -4,13 +4,10 @@ import { ContainerDefinition } from "../utils/types";
 import { useDataObject } from "../utils/useDataObject";
 
 export const DiceRollerRemoteContainerDefinition: ContainerDefinition = {
-    type: "dice-roller-remote",
-    config: {
-        dataObjects: [DiceRollerRemoteDataObject],
-        initialDataObjects: {
-            "dice-roller-remote-key": DiceRollerRemoteDataObject,
-        },
-    }
+    name: "dice-roller-remote",
+    initialObjects: {
+        "dice-roller-remote-key": DiceRollerRemoteDataObject,
+    },
 }
 
 /**

@@ -1,4 +1,4 @@
-import { ContainerCreateConfig } from "@fluid-experimental/fluid-static";
+import { ContainerConfig } from "@fluid-experimental/fluid-static";
 
 export type ContainerType =
     "mouse"
@@ -9,7 +9,6 @@ export type ContainerType =
     | "multi-time-clicker"
     | "collection-example";
 
-export interface ContainerDefinition {
-    type: ContainerType;
-    config: ContainerCreateConfig;
+export interface ContainerDefinition extends ContainerConfig {
+    name: ContainerType;
 }

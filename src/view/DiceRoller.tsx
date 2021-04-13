@@ -4,13 +4,10 @@ import { ContainerDefinition } from "../utils/types";
 import { useDataObject } from "../utils/useDataObject";
 
 export const DiceRollerContainerDefinition: ContainerDefinition = {
-    type: "dice-roller",
-    config: {
-        dataObjects: [DiceRollerDataObject],
-        initialDataObjects: {
-            "dice-roller-key": DiceRollerDataObject,
-        },
-    }
+    name: "dice-roller",
+    initialObjects: {
+        "dice-roller-key": DiceRollerDataObject,
+    },
 }
 
 /**

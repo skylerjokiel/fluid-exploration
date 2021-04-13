@@ -5,15 +5,12 @@ import { useKeyValueDataObject } from "../utils/useDataObject";
 import { MouseTracker, MouseContainerDefinition } from "./MouseTracker";
 
 export const NoteBoardContainerDefinition: ContainerDefinition = {
-    type: "noteboard",
-    config: {
-        dataObjects: [KeyValueDataObject],
-        initialDataObjects: {
-            "note-location-data": KeyValueDataObject,
-            "note-content-data": KeyValueDataObject,
-            ...MouseContainerDefinition.config.initialDataObjects,
-        },
-    }
+    name: "noteboard",
+    initialObjects: {
+        "note-location-data": KeyValueDataObject,
+        "note-content-data": KeyValueDataObject,
+        ...MouseContainerDefinition.initialObjects,
+    },
 }
 
 export interface NoteInfo {
