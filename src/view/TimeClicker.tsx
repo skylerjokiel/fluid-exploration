@@ -22,9 +22,7 @@ export function TimeClicker() {
  * Given an id for a DataObject that exists it will generate a TimeClicker
  */
 export function TimeClickerItem(props: {id: string}) {
-    const [data, setPair, loading] = useKeyValueDataObject<number>(props.id);
-    
-    if (loading) return <div>Loading... </div>;
+    const [data, setPair] = useKeyValueDataObject<number>(props.id);
 
     return (
     <div className="App">

@@ -20,11 +20,9 @@ export interface NoteInfo {
 }
 
 export function NoteBoard() {
-    const [locationData, setLocationDataItem, locationDataLoading] = useKeyValueDataObject<{ x: number, y: number }>("note-location-data");
-    const [contentData, setContentDataItem, contentDataLoading] = useKeyValueDataObject<string>("note-content-data");
+    const [locationData, setLocationDataItem] = useKeyValueDataObject<{ x: number, y: number }>("note-location-data");
+    const [contentData, setContentDataItem] = useKeyValueDataObject<string>("note-content-data");
     const [mouseTracking, setMouseTracking] = React.useState(false);
-
-    if (locationDataLoading || contentDataLoading) return <div>Loading...</div>
 
     const notes = [];
     for (let key in locationData) {

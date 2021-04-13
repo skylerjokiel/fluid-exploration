@@ -1,48 +1,50 @@
 import { KeyValueDataObject } from "@fluid-experimental/data-objects";
-import { DataObject } from "@fluidframework/aqueduct";
+import { SharedMap } from "@fluidframework/map";
 import React from "react";
+
 import { FluidContext } from "./FluidContext";
 
 /**
- * Loads a DataObject of a given type
+ * Loads a KeyValueDataObject with a given schema.
+ * Note: There is no way to remove items from the KVPair.
+ * 
+ * @returns - [strongly typed object, function to set a key/value]
  */
-export function useDataObject<T extends DataObject>(id: string): T | undefined {
-    const [dataObject, setDataObject] = React.useState<T | undefined>();
+export function useKeyValueDataObject<T = any>(id: string): [Record<string, T>, (key: string, value: T) => void] {
+    const [data, setData] = React.useState<Record<string, T>>({});
     const container = React.useContext(FluidContext);
+    const kvpObj = container.initialObjects[id] as KeyValueDataObject;
 
     React.useEffect(() => {
-        const load = async () => {
-            const keyValueDataObject = await container.initialObjects[id] as T;
-            setDataObject(keyValueDataObject);
-        }
+        const updateData = () => setData(kvpObj.query());
+        updateData();
+        kvpObj.on("changed", updateData);
+        return () => {kvpObj.off("change", updateData)};
+    }, [kvpObj]);
 
-        load();
-    }, [id, container]);
-
-    return dataObject;
+    return [data, kvpObj.set];
 }
 
 /**
  * Loads a KeyValueDataObject with a given schema.
  * Note: There is no way to remove items from the KVPair.
  * 
- * @returns - [strongly typed object, function to set a key/value, loading boolean]
+ * @returns - [strongly typed object, function to set a key/value]
  */
-export function useKeyValueDataObject<T = any>(id: string): [Record<string, T>, (key: string, value: T) => void, boolean] {
+ export function useSharedMap<T = any>(id: string): [Record<string, T>, (key: string, value: T) => void] {
     const [data, setData] = React.useState<Record<string, T>>({});
-    const dataObject = useDataObject<KeyValueDataObject>(id);
+    const container = React.useContext(FluidContext);
+    const map = container.initialObjects[id] as SharedMap;
 
     React.useEffect(() => {
-        if (dataObject) {
-            const updateData = () => setData(dataObject.query());
+        if (map) {
+            const updateData = () => setData(Object.fromEntries(map.entries()));
             updateData();
-            dataObject.on("changed", updateData);
-            return () => {dataObject.off("change", updateData)};
+            map.on("valueChanged", updateData);
+            return () => {map.off("valueChanged", updateData)};
         }
-    }, [dataObject]);
+    }, [map]);
 
-    const setPair = dataObject
-        ? dataObject.set
-        : () => { throw new Error(`Attempting to write to DataObject ${id} that is not yet loaded. Ensure you are waiting on the loading boolean.`)};
-    return [data, setPair, dataObject === undefined];
+    const setPair = (k:string, v:any) => map.set(k,v);
+    return [data, setPair];
 }

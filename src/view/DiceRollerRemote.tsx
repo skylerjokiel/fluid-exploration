@@ -1,12 +1,12 @@
 import React from "react";
 import { DiceRollerRemoteDataObject, IDiceRollerRemoteDataObject } from "../dataObjects/DiceRollerRemote";
+import { FluidContext } from "../utils/FluidContext";
 import { ContainerDefinition } from "../utils/types";
-import { useDataObject } from "../utils/useDataObject";
 
 export const DiceRollerRemoteContainerDefinition: ContainerDefinition = {
     name: "dice-roller-remote",
     initialObjects: {
-        "dice-roller-remote-key": DiceRollerRemoteDataObject,
+        diceRollerRemoteKey: DiceRollerRemoteDataObject,
     },
 }
 
@@ -14,11 +14,10 @@ export const DiceRollerRemoteContainerDefinition: ContainerDefinition = {
  * This is very future thinking. It demonstrates how DataObjects can contain a view.
  */
 export function DiceRollerRemote() {
-    const dataObject = useDataObject<DiceRollerRemoteDataObject>("dice-roller-remote-key");
+    const container = React.useContext(FluidContext);
+    const dataObject = container.initialObjects.diceRollerRemoteKey as DiceRollerRemoteDataObject;
 
-    return dataObject
-        ? <DiceRollerRemoteView model={dataObject} />
-        : <div>Loading DiceRoller... </div>;
+    return <DiceRollerRemoteView model={dataObject} />;
 }
 
 interface IDiceRollerViewProps {

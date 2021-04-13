@@ -20,54 +20,52 @@ interface CursorInfo {
 const userId = Math.floor(Date.now()*Math.random()).toString();
 
 export function useMouseTracker(): Record<string, CursorInfo> {
-    const [data, setData, loading] = useKeyValueDataObject<CursorInfo>("mouse-track-info");
+    const [data, setData] = useKeyValueDataObject<CursorInfo>("mouse-track-info");
 
     React.useEffect(() => {
-        if (!loading) {
-            let lastUpdateTime = 0;
-            const updateMouse = (event: MouseEvent) => {
+        let lastUpdateTime = 0;
+        const updateMouse = (event: MouseEvent) => {
 
-                // We want to avoid spamming the server and the cursor can move faster than the screen can paint.
-                const currentTime = Date.now();
-                if (currentTime - lastUpdateTime < 5) {
-                    lastUpdateTime = currentTime;
-                    return;
-                }
-
+            // We want to avoid spamming the server and the cursor can move faster than the screen can paint.
+            const currentTime = Date.now();
+            if (currentTime - lastUpdateTime < 5) {
                 lastUpdateTime = currentTime;
-                let cursorInfo: CursorInfo = data[userId] ?? { x:event.pageX, y:event.pageY, color: getRandomColor(), active: true};
-                cursorInfo.x = event.pageX;
-                cursorInfo.y = event.pageY;
-                cursorInfo.active = true;
-                setData(userId, cursorInfo);
+                return;
             }
 
-            document.addEventListener("mousemove", updateMouse);
-
-            const handleMouseEnter = () => {
-                document.addEventListener("mousemove", updateMouse);
-            }
-            document.addEventListener("mouseenter", handleMouseEnter);
-
-            const handleMouseLeave= () => {
-                document.removeEventListener("mousemove", updateMouse);
-
-                const cursorInfo: CursorInfo = data[userId];
-                if (cursorInfo === undefined) return;
-
-                cursorInfo.active = false;
-                setData(userId, cursorInfo);
-            }
-            document.addEventListener("mouseleave", handleMouseLeave);
-            return () => { 
-                // TODO: We need to ensure the developer has a way to close the container
-                // It's currently running in the background
-                document.removeEventListener("mousemove", updateMouse);
-                document.removeEventListener("mouseenter", handleMouseEnter);
-                document.removeEventListener("mouseleave", handleMouseLeave);
-            }
+            lastUpdateTime = currentTime;
+            let cursorInfo: CursorInfo = data[userId] ?? { x:event.pageX, y:event.pageY, color: getRandomColor(), active: true};
+            cursorInfo.x = event.pageX;
+            cursorInfo.y = event.pageY;
+            cursorInfo.active = true;
+            setData(userId, cursorInfo);
         }
-    }, [data, setData, loading]);
+
+        document.addEventListener("mousemove", updateMouse);
+
+        const handleMouseEnter = () => {
+            document.addEventListener("mousemove", updateMouse);
+        }
+        document.addEventListener("mouseenter", handleMouseEnter);
+
+        const handleMouseLeave= () => {
+            document.removeEventListener("mousemove", updateMouse);
+
+            const cursorInfo: CursorInfo = data[userId];
+            if (cursorInfo === undefined) return;
+
+            cursorInfo.active = false;
+            setData(userId, cursorInfo);
+        }
+        document.addEventListener("mouseleave", handleMouseLeave);
+        return () => { 
+            // TODO: We need to ensure the developer has a way to close the container
+            // It's currently running in the background
+            document.removeEventListener("mousemove", updateMouse);
+            document.removeEventListener("mouseenter", handleMouseEnter);
+            document.removeEventListener("mouseleave", handleMouseLeave);
+        }
+    }, [data, setData]);
 
     return data;
 }
